@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class Message(BaseModel):
@@ -6,20 +6,18 @@ class Message(BaseModel):
 
 
 class UserSchema(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
+    user_name: str
+    user_nickname: str
+    user_email: EmailStr
+    user_password: str
 
 
-# retorna apenas o usuário e email, sem a senha
 class UserPublic(BaseModel):
-    username: str
-    email: EmailStr
-    userId: int
-
-
-class UserDB(UserSchema):
-    userId: int
+    user_id: int
+    user_name: str
+    user_nickname: str
+    user_email: EmailStr
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserList(BaseModel):

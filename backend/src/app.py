@@ -1,8 +1,13 @@
 from http import HTTPStatus
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
-from src.schemas import Message, UserDB, UserList, UserPublic, UserSchema
+from src.database import get_session
+from src.models import User
+from src.schemas import Message, UserList, UserPublic, UserSchema
 
 app = FastAPI(
     title='Brechó',
@@ -14,42 +19,91 @@ app = FastAPI(
     version='1.0.0',
 )
 
-database = []
+
+@app.get('/', status_code=HTTPStatus.OK, response_model=Message)
+def read_root():
+    return {'message': 'Welcome to Brechó API!'}
 
 
-@app.post('/users/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
-def create_user(user: UserSchema):
-    # breakpoint() for debugging
-    user_with_id = UserDB(**user.model_dump(), userId=len(database) + 1)
-    database.append(user_with_id)
-    return user_with_id
+@app.get('/user/', response_model=UserList)
+def read_users(
+    skip: int = 0, limit: int = 100, session: Session = Depends(get_session)
+):
+    users = session.scalars(select(User).offset(skip).limit(limit)).all()
+    return {'users': users}
 
 
-@app.get('/users/', response_model=UserList)
-def read_users():
-    return {'users': database}
+@app.post('/user/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
+def create_user(user: UserSchema, session: Session = Depends(get_session)):
+    db_user = session.scalar(
+        select(User).where(
+            (User.user_nickname == user.user_nickname)
+            | (User.user_email == user.user_email)
+        )
+    )
+
+    if db_user:
+        if db_user.user_nickname == user.user_nickname:
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail='Nickname already exists',
+            )
+        elif db_user.user_email == user.user_email:
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail='Email already exists',
+            )
+
+    db_user = User(
+        user_name=user.user_name,
+        user_nickname=user.user_nickname,
+        user_email=user.user_email,
+        user_password=user.user_password,
+    )
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+
+    return db_user
 
 
-@app.put('/users/{userId}', response_model=UserPublic)
-def update_user(userId: int, user: UserSchema):
-    if userId > len(database) or userId < 1:
+@app.put('/user/{user_id}', response_model=UserPublic)
+def update_user(
+    user_id: int, user: UserSchema, session: Session = Depends(get_session)
+):
+    db_user = session.scalar(select(User).where(User.user_id == user_id))
+    if not db_user:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail='User not found'
         )
 
-    user_with_id = UserDB(**user.model_dump(), userId=userId)
-    database[userId - 1] = user_with_id
+    try:
+        db_user.user_name = user.user_name
+        db_user.user_nickname = user.user_nickname
+        db_user.user_password = user.user_password
+        db_user.user_email = user.user_email
+        session.commit()
+        session.refresh(db_user)
 
-    return user_with_id
+        return db_user
+
+    except IntegrityError:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='Nickname or Email already exists',
+        )
 
 
-@app.delete('/users/{userId}', response_model=Message)
-def delete_user(userId: int):
-    if userId > len(database) or userId < 1:
+@app.delete('/user/{user_id}', response_model=Message)
+def delete_user(user_id: int, session: Session = Depends(get_session)):
+    db_user = session.scalar(select(User).where(User.user_id == user_id))
+
+    if not db_user:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail='User not found'
         )
 
-    del database[userId - 1]
+    session.delete(db_user)
+    session.commit()
 
     return {'message': 'User deleted'}
