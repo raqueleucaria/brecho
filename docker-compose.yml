@@ -15,6 +15,7 @@ services:
             - "${MYSQL_LOCAL_PORT}:${MYSQL_DOCKER_PORT}"
         expose:
             - "${MYSQL_DOCKER_PORT}"
+        command: --port=${MYSQL_DOCKER_PORT}
         healthcheck:
             test: ["CMD-SHELL", "mysqladmin ping -h localhost -u$MYSQL_USERNAME -p$MYSQL_PASSWORD"]
             timeout: 20s
