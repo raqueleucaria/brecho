@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
@@ -12,12 +13,12 @@ from src.security import create_access_token, verify_password
 
 router = APIRouter(prefix='/auth', tags=['auth'])
 
+OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]
+Session = Annotated[Session, Depends(get_session)]
+
 
 @router.post('/token/', response_model=Token)
-def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    session: Session = Depends(get_session),
-):
+def login(form_data: OAuth2Form, session: Session):
     user = session.scalar(
         select(User).where(User.user_email == form_data.username)
     )
