@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from src.database import get_session
 from src.models import User
 from src.schemas import Message, UserList, UserPublic, UserSchema
+from src.security import get_password_hash
 
 app = FastAPI(
     title='Brechó',
@@ -54,11 +55,13 @@ def create_user(user: UserSchema, session: Session = Depends(get_session)):
                 detail='Email already exists',
             )
 
+    hashed_password = get_password_hash(user.user_password)
+
     db_user = User(
         user_name=user.user_name,
         user_nickname=user.user_nickname,
         user_email=user.user_email,
-        user_password=user.user_password,
+        user_password=hashed_password,
     )
     session.add(db_user)
     session.commit()
@@ -80,7 +83,7 @@ def update_user(
     try:
         db_user.user_name = user.user_name
         db_user.user_nickname = user.user_nickname
-        db_user.user_password = user.user_password
+        db_user.user_password = get_password_hash(user.user_password)
         db_user.user_email = user.user_email
         session.commit()
         session.refresh(db_user)
