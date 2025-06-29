@@ -1,64 +1,54 @@
-# Modelo Entidade Relacionamento
+# Entity-Relationship Model
 
-## Entidades
+## Entities
 
-- USUARIO
-- ENDERECO
-- LOJA
-- PRODUTO
-- CARRINHO
-- PEDIDO
-- PAGAMENTO
-- CARTAO
-- CONTA_BANCARIA
-- VENDA
-- NOTIFICACAO
+- USER
+- ADDRESS
+- STORE
+- PRODUCT
+- CART
+- ORDER
+- PAYMENT
+- CARD
+- BANK_ACCOUNT
+- SALE
+- NOTIFICATION
 
-## Atributos
+## Attributes
 
-- **USUARIO** (<u>idUsuario</u>, nome, email, senha, dataCriacao, ddd, numero)
-- **ENDERECO** (<u>idEndereco</u>, idUsuario, cep, estado, cidade, bairro, rua, numero, complemento)
-- **LOJA** (<u>idLoja</u>, idUsuario, dataCriacao, status)
-- **PRODUTO** (<u>idProduto</u>, idLoja, nome, descricao, preco, quantidade, categoria, tamanho, cor)
-- **CARRINHO** (<u>idCarrinho</u>, idUsuario, {idProduto}, dataCriacao)
-- **PEDIDO** (<u>idPedido</u>, idUsuario, idEndereco, status, dataPedido, {idProduto})
-- **PAGAMENTO** (<u>idPagamento</u>, idPedido, tipo, status, dataPagamento)
-  - **PAGAMENTO_PIX** (<u>idPagamento</u>, chavePix, comprovante)
-  - **PAGAMENTO_BOLETO** (<u>idPagamento</u>, codigoBarras, dataVencimento, linhaDigitavel)
-  - **PAGAMENTO_CARTAO** (<u>idPagamento</u>, idCartao)
-- **CARTAO** (<u>idCartao</u>, idUsuario, numero, nomeTitular, validade, cvv, cpfTitular)
-- **CONTA_BANCARIA** (<u>idContaBancaria</u>, idLoja, banco, agencia, conta, tipo)
-- **VENDA** (<u>idVenda</u>, idLoja, idPedido, dataVenda, status)
-- **NOTIFICACAO** (<u>idNotificacao</u>, idVenda, status, dataEnvio)
+- **USER** (<u>userId</u>, name, email, password, createdAt, phone(ddd, phoneNumber))
+- **ADDRESS** (<u>addressId</u>, userId, zipCode, state, city, district, street, number, complement)
+- **STORE** (<u>storeId</u>, userId, createdAt, status)
+- **PRODUCT** (<u>productId</u>, storeId, name, description, price, quantity, category, size, color)
+- **CART** (<u>cartId</u>, userId, {productId}, createdAt)
+- **ORDER** (<u>orderId</u>, userId, addressId, status, orderDate, {productId})
+- **PAYMENT** (<u>paymentId</u>, orderId, type, status, paymentDate)
+  - **PAYMENT_PIX** (<u>paymentId</u>, pixKey, receipt)
+  - **PAYMENT_BOLETO** (<u>paymentId</u>, barCode, dueDate, digitLine)
+  - **PAYMENT_CARD** (<u>paymentId</u>, cardId)
+- **CARD** (<u>cardId</u>, userId, number, cardHolder, expiration, cvv, cardHolderCpf)
+- **BANK_ACCOUNT** (<u>bankAccountId</u>, storeId, bank, agency, account, type)
+- **SALE** (<u>saleId</u>, storeId, orderId, saleDate, status)
+- **NOTIFICATION** (<u>notificationId</u>, saleId, status, sentAt)
 
-## Relacionamentos
+## Relationships
 
-- USUARIO **possui** ENDERECO  
-  <br> Um USUARIO possui um ou vários ENDERECO(s) (1:N)
+- USER **has** ADDRESS <br> A USER has one or more ADDRESS(es) (1:N)
 
-- USUARIO **tem** LOJA  
-  <br> Um USUARIO pode ter nenhuma ou uma LOJA (0:1)
+- USER **owns** STORE <br> A USER may own zero or one STORE (0:1)
 
-- LOJA **vende** PRODUTO  
-  <br> Uma LOJA vende nenhum ou vários PRODUTO(s) (0:N)
+- STORE **sells** PRODUCT <br> A STORE sells zero or more PRODUCT(s) (0:N)
 
-- USUARIO **cria** CARRINHO  
-  <br> Um USUARIO cria nenhum ou um CARRINHO(s) (0:1)
+- USER **creates** CART <br> A USER creates zero or one CART(s) (0:1)
 
-- USUARIO **realiza** PEDIDO  
-  <br> Um USUARIO realiza nenhum ou vários PEDIDO(s) (0:N)
+- USER **places** ORDER <br> A USER places zero or more ORDER(s) (0:N)
 
-- PEDIDO **validado_por** PAGAMENTO 
-  <br> Um PEDIDO é validado por um PAGAMENTO (1:1)
+- ORDER **validated_by** PAYMENT <br> An ORDER is validated by one PAYMENT (1:1)
 
-- USUARIO **salva** CARTAO  
-  <br> Um USUARIO pode salvar nenhum ou vários CARTAO(s) (0:N)
+- USER **saves** CARD <br> A USER may save zero or more CARD(s) (0:N)
 
-- LOJA **cadastra** CONTA_BANCARIA  
-  <br> Uma LIJA possui uma CONTA_BANCARIA (1:1)
+- STORE **registers** BANK_ACCOUNT <br> A STORE has one BANK_ACCOUNT (1:1)
 
-- LOJA **realiza** VENDA  
-  <br> Uma LOJA realiza uma ou várias VENDA(s) (1:N)
+- STORE **makes** SALE <br> A STORE makes one or more SALE(s) (1:N)
 
-- VENDA **gera** NOTIFICACAO  
-  <br> Uma VENDA pode gerar uma ou várias NOTIFICACAO(ões) (1:N)
+- SALE **generates** NOTIFICATION <br> A SALE may generate one or more NOTIFICATION(s) (1:N)
