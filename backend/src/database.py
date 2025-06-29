@@ -1,11 +1,21 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+# from sqlalchemy import create_engine
+# from sqlalchemy.orm import Session
+
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from src.settings import Settings
 
-engine = create_engine(Settings().DATABASE_URL)
+engine = create_async_engine(Settings().DATABASE_URL)
 
 
-def get_session():
-    with Session(engine) as session:
+async def get_session():
+    async with AsyncSession(engine, expire_on_commit=False) as session:
         yield session
+
+
+# modificando o get_session para usar AsyncSession
+#  que é compatível com operações assíncronas
+# "expire_on_commit=False":
+# é usado para evitar que os objetos sejam expirados após o commit
+# permitindo que sejam usados imediatamente após a transação
+# evitando novas consultas ao banco de dados para acessar os mesmos objetos.
