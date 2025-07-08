@@ -113,24 +113,24 @@ def test_delete_user(client, user, token):
     assert response.json() == {'message': 'User deleted'}
 
 
-def test_update_user_forbidden(client, user, another_user, token):
+def test_update_user_with_wrong_user(client, other_user, token):
     response = client.put(
-        f'/user/{another_user.user_id}',
+        f'/user/{other_user.user_id}',
         headers={'Authorization': f'Bearer {token}'},
         json={
-            'user_name': 'forbidden',
-            'user_nickname': 'forbidden_nick',
-            'user_email': 'forbidden@example.com',
-            'user_password': 'forbiddenpass',
+            'user_name': 'wrong_user',
+            'user_nickname': 'wrong_nick',
+            'user_email': 'wrong_email@email.com',
+            'user_password': 'wrongpass',
         },
     )
     assert response.status_code == HTTPStatus.FORBIDDEN
     assert response.json() == {'detail': 'Not enough permissions'}
 
 
-def test_delete_user_forbidden(client, user, another_user, token):
+def test_delete_user_with_wrong_user(client, other_user, token):
     response = client.delete(
-        f'/user/{another_user.user_id}',
+        f'/user/{other_user.user_id}',
         headers={'Authorization': f'Bearer {token}'},
     )
     assert response.status_code == HTTPStatus.FORBIDDEN

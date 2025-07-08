@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from datetime import datetime
 
+import factory
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
@@ -65,12 +66,22 @@ def mock_db_time():
 @pytest_asyncio.fixture
 async def user(session):
     user_password = 'testtest'
-    user = User(
-        user_name='Teste',
-        user_nickname='Teste Nick',
-        user_email='teste@test.com',
-        user_password=get_password_hash(user_password),
-    )
+    user = UserFactory(user_password=get_password_hash(user_password))
+
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+
+    user.clear_password = user_password
+
+    return user
+
+
+@pytest_asyncio.fixture
+async def other_user(session):
+    user_password = 'testtest'
+    user = UserFactory(user_password=get_password_hash(user_password))
+
     session.add(user)
     await session.commit()
     await session.refresh(user)
@@ -92,16 +103,15 @@ def token(client, user):
     return response.json()['access_token']
 
 
-@pytest_asyncio.fixture
-async def another_user(session):
-    user = User(
-        user_name='Other',
-        user_nickname='OtherNick',
-        user_email='other@example.com',
-        user_password=get_password_hash('otherpass'),
+class UserFactory(factory.Factory):
+    class Meta:
+        model = User
+
+    user_name = factory.Sequence(lambda n: f'test{n}')
+    user_nickname = factory.LazyAttribute(lambda obj: f'{obj.user_name}_nick')
+    user_email = factory.LazyAttribute(
+        lambda obj: f'{obj.user_name}@email.com'
     )
-    session.add(user)
-    await session.commit()
-    await session.refresh(user)
-    user.user_clear_password = 'otherpass'
-    return user
+    user_password = factory.LazyAttribute(
+        lambda obj: f'{obj.user_name}_password'
+    )
