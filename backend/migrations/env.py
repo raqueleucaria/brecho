@@ -1,3 +1,4 @@
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -8,10 +9,19 @@ from alembic import context
 from src.models import table_registry
 from src.settings import Settings
 
+import re
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option("sqlalchemy.url", Settings().DATABASE_URL)
+# config.set_main_option("sqlalchemy.url", Settings().DATABASE_URL)
+
+# força o uso de pymysql só para Alembic (modo sync)
+
+async_url = Settings().DATABASE_URL
+# força o uso de driver sync (pymysql) no Alembic
+sync_url = re.sub(r"^\s*mysql\+aiomysql", "mysql+pymysql", async_url)
+config.set_main_option("sqlalchemy.url", sync_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
