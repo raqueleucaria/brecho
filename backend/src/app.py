@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import FastAPI
 
 from src.router import authRouter, userRouter
-from src.schemas import Message
+from src.schema.messageSchema import Message
 
 app = FastAPI(
     title='Brechó',

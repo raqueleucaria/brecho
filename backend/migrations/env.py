@@ -6,7 +6,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.models import table_registry
+from src.model.user import table_registry
 from src.settings import Settings
 
 import re

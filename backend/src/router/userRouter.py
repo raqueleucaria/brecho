@@ -7,10 +7,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_session
-from src.models import User
-from src.schemas import (
+from src.model.user import User
+from src.schema.messageSchema import Message
+from src.schema.userSchema import (
     FilterPage,
-    Message,
     UserList,
     UserPublic,
     UserSchema,
@@ -28,9 +28,8 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 
 @router.get('/', response_model=UserList)
 async def read_users(
-        session: Session,
-        filter_users: Annotated[FilterPage, Query()]
-    ):
+    session: Session, filter_users: Annotated[FilterPage, Query()]
+):
     users = await session.scalars(
         select(User).offset(filter_users.offset).limit(filter_users.limit)
     )

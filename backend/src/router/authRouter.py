@@ -7,8 +7,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_session
-from src.models import User
-from src.schemas import Token
+from src.model.user import User
+from src.schema.authSchema import Token
 from src.security import create_access_token, verify_password
 
 router = APIRouter(prefix='/auth', tags=['auth'])

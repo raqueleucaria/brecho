@@ -3,7 +3,7 @@ from dataclasses import asdict
 import pytest
 from sqlalchemy import create_engine, select, text
 
-from src.models import User
+from src.model.user import User
 from src.settings import Settings
 
 settings = Settings()

@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_session
-from src.models import User
+from src.model.user import User
 from src.settings import Settings
 
 settings = Settings()
