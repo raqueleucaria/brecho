@@ -8,7 +8,7 @@ table_registry = registry()
 
 @table_registry.mapped_as_dataclass
 class User:
-    __tablename__ = 'users'
+    __tablename__ = 'tbl_user'
 
     user_id: Mapped[int] = mapped_column(init=False, primary_key=True)
     user_name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -19,9 +19,10 @@ class User:
         String(255), nullable=False, unique=True
     )
     user_password: Mapped[str] = mapped_column(String(255), nullable=False)
-    user_created_at: Mapped[datetime] = mapped_column(
-        init=False, server_default=func.now()
+    user_phone_country_code: Mapped[str] = mapped_column(
+        String(10), nullable=False
     )
-    user_updated_at: Mapped[datetime] = mapped_column(
-        init=False, server_default=func.now(), onupdate=func.now()
+    user_phone_state_code: Mapped[str] = mapped_column(
+        String(10), nullable=False
     )
+    user_phone_number: Mapped[str] = mapped_column(String(20), nullable=False)

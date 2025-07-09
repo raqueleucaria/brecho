@@ -78,6 +78,9 @@ async def update_user(
         'user_nickname': user.user_nickname,
         'user_password': get_password_hash(user.user_password),
         'user_email': user.user_email,
+        'user_phone_country_code': user.user_phone_country_code,
+        'user_phone_state_code': user.user_phone_state_code,
+        'user_phone_number': user.user_phone_number,
     }
 
     try:
