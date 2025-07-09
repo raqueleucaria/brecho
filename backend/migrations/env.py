@@ -10,6 +10,18 @@ from alembic import context
 import src.model.user
 import src.model.seller
 import src.model.client
+import src.model.address
+import src.model.color
+import src.model.category
+import src.model.product
+import src.model.cart_want
+import src.model.checkout
+import src.model.generate
+import src.model.analyse
+import src.model.order_payment
+import src.model.card
+import src.model.pix
+import src.model.boleto
 
 from src.database import table_registry
 from src.settings import Settings
