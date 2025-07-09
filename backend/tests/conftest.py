@@ -1,7 +1,6 @@
 from contextlib import contextmanager
 from datetime import datetime
 
-import factory
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
@@ -9,9 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import StaticPool
 
 from src.app import app
-from src.database import get_session
-from src.model.user import User, table_registry
+from src.database import get_session, table_registry
 from src.security import get_password_hash
+
+from .factories import UserFactory
 
 
 @pytest.fixture
@@ -100,20 +100,3 @@ def token(client, user):
         },
     )
     return response.json()['access_token']
-
-
-class UserFactory(factory.Factory):
-    class Meta:
-        model = User
-
-    user_name = factory.Sequence(lambda n: f'test{n}')
-    user_nickname = factory.LazyAttribute(lambda obj: f'{obj.user_name}_nick')
-    user_email = factory.LazyAttribute(
-        lambda obj: f'{obj.user_name}@email.com'
-    )
-    user_password = factory.LazyAttribute(
-        lambda obj: f'{obj.user_name}_password'
-    )
-    user_phone_country_code = factory.LazyAttribute(lambda n: f'+{n}{n}')
-    user_phone_state_code = factory.LazyAttribute(lambda n: f'{n}{n}')
-    user_phone_number = factory.LazyAttribute(lambda n: f'{n}' * 5)
