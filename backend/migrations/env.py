@@ -7,7 +7,11 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.model.user import table_registry
+import src.model.user
+import src.model.seller
+import src.model.client
+
+from src.database import table_registry
 from src.settings import Settings
 
 # this is the Alembic Config object, which provides
