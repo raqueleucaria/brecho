@@ -5,7 +5,6 @@ import factory
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
-from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import StaticPool
 
@@ -47,15 +46,15 @@ async def session():
 
 @contextmanager
 def _mock_db_time(*, model, time=datetime(2025, 1, 1)):
-    def fake_time_hook(mapper, connection, target):
-        if hasattr(target, 'user_created_at'):
-            target.user_created_at = time
-        if hasattr(target, 'user_updated_at'):
-            target.user_updated_at = time
+    # def fake_time_hook(mapper, connection, target):
+    #     if hasattr(target, 'user_created_at'):
+    #         target.user_created_at = time
+    #     if hasattr(target, 'user_updated_at'):
+    #         target.user_updated_at = time
 
-    event.listen(model, 'before_insert', fake_time_hook)
+    # event.listen(model, 'before_insert', fake_time_hook)
     yield time
-    event.remove(model, 'before_insert', fake_time_hook)
+    # event.remove(model, 'before_insert', fake_time_hook)
 
 
 @pytest.fixture
@@ -115,3 +114,6 @@ class UserFactory(factory.Factory):
     user_password = factory.LazyAttribute(
         lambda obj: f'{obj.user_name}_password'
     )
+    user_phone_country_code = factory.LazyAttribute(lambda n: f'+{n}{n}')
+    user_phone_state_code = factory.LazyAttribute(lambda n: f'{n}{n}')
+    user_phone_number = factory.LazyAttribute(lambda n: f'{n}' * 5)

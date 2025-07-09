@@ -11,6 +11,9 @@ def test_create_user(client):
             'user_nickname': 'usernick1',
             'user_email': 'user1@example.com',
             'user_password': 'secret123',
+            'user_phone_country_code': '+55',
+            'user_phone_state_code': '11',
+            'user_phone_number': '123456789',
         },
     )
     assert response.status_code == HTTPStatus.CREATED
@@ -19,6 +22,9 @@ def test_create_user(client):
         'user_name': 'user1',
         'user_nickname': 'usernick1',
         'user_email': 'user1@example.com',
+        'user_phone_country_code': '+55',
+        'user_phone_state_code': '11',
+        'user_phone_number': '123456789',
     }
 
 
@@ -30,6 +36,9 @@ def test_create_user_with_existing_nickname(client, user):
             'user_nickname': user.user_nickname,
             'user_email': 'user2@example.com',
             'user_password': 'secret456',
+            'user_phone_country_code': '+55',
+            'user_phone_state_code': '11',
+            'user_phone_number': '123456789',
         },
     )
     assert response.status_code == HTTPStatus.CONFLICT
@@ -44,6 +53,9 @@ def test_create_user_with_existing_email(client, user):
             'user_nickname': 'usernick3',
             'user_email': user.user_email,
             'user_password': 'secret789',
+            'user_phone_country_code': '+55',
+            'user_phone_state_code': '11',
+            'user_phone_number': '123456789',
         },
     )
     assert response.status_code == HTTPStatus.CONFLICT
@@ -65,6 +77,9 @@ def test_update_user(client, user, token):
             'user_nickname': 'user_updated_nick',
             'user_email': 'user_updated@example.com',
             'user_password': 'mynewpassword_updated',
+            'user_phone_country_code': '+55',
+            'user_phone_state_code': '11',
+            'user_phone_number': '123456789',
         },
     )
     assert response.status_code == HTTPStatus.OK
@@ -73,6 +88,9 @@ def test_update_user(client, user, token):
         'user_name': 'user_updated',
         'user_nickname': 'user_updated_nick',
         'user_email': 'user_updated@example.com',
+        'user_phone_country_code': '+55',
+        'user_phone_state_code': '11',
+        'user_phone_number': '123456789',
     }
 
 
@@ -84,6 +102,9 @@ def test_update_integrity_error(client, user, token):
             'user_nickname': 'usernick_repeated_nick',
             'user_email': 'user_repeated@example.com',
             'user_password': 'secret',
+            'user_phone_country_code': '+55',
+            'user_phone_state_code': '11',
+            'user_phone_number': '123456789',
         },
     )
 
@@ -95,6 +116,9 @@ def test_update_integrity_error(client, user, token):
             'user_nickname': 'usernick_repeated_nick',
             'user_email': 'user_repeated@example.com',
             'user_password': 'secret',
+            'user_phone_country_code': '+55',
+            'user_phone_state_code': '11',
+            'user_phone_number': '123456789',
         },
     )
 
@@ -122,6 +146,9 @@ def test_update_user_with_wrong_user(client, other_user, token):
             'user_nickname': 'wrong_nick',
             'user_email': 'wrong_email@email.com',
             'user_password': 'wrongpass',
+            'user_phone_country_code': '+55',
+            'user_phone_state_code': '11',
+            'user_phone_number': '123456789',
         },
     )
     assert response.status_code == HTTPStatus.FORBIDDEN

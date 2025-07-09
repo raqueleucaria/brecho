@@ -18,16 +18,20 @@ except Exception as e:
 
 
 @pytest.mark.asyncio
-async def test_create_user(session, mock_db_time):
-    with mock_db_time(model=User) as time:
-        new_user = User(
-            user_name='test',
-            user_nickname='test_nick',
-            user_password='secret',
-            user_email='teste@test',
-        )
-        session.add(new_user)
-        await session.commit()
+async def test_create_user(session):
+    new_user = User(
+        user_name='test',
+        user_nickname='test_nick',
+        user_password='secret',
+        user_email='teste@test',
+        user_phone_country_code='+55',
+        user_phone_state_code='11',
+        user_phone_number='123456789',
+    )
+
+    session.add(new_user)
+    await session.commit()
+
     user = await session.scalar(select(User).where(User.user_name == 'test'))
     # breakpoint()
     assert asdict(user) == {
@@ -36,6 +40,7 @@ async def test_create_user(session, mock_db_time):
         'user_nickname': 'test_nick',
         'user_password': 'secret',
         'user_email': 'teste@test',
-        'user_created_at': time,
-        'user_updated_at': time,
+        'user_phone_country_code': '+55',
+        'user_phone_state_code': '11',
+        'user_phone_number': '123456789',
     }

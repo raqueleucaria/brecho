@@ -60,6 +60,9 @@ async def create_user(user: UserSchema, session: Session):
         user_nickname=user.user_nickname,
         user_email=user.user_email,
         user_password=hashed_password,
+        user_phone_country_code=user.user_phone_country_code,
+        user_phone_state_code=user.user_phone_state_code,
+        user_phone_number=user.user_phone_number,
     )
     return await UserRepository.create_user(session, new_user)
 
