@@ -2,12 +2,12 @@ from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_session
 from src.model.user import User
+from src.repository.userRepository import UserRepository
 from src.schema.messageSchema import Message
 from src.schema.userSchema import (
     FilterPage,
@@ -30,20 +30,16 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 async def read_users(
     session: Session, filter_users: Annotated[FilterPage, Query()]
 ):
-    users = await session.scalars(
-        select(User).offset(filter_users.offset).limit(filter_users.limit)
+    users = await UserRepository.get_users(
+        session, filter_users.offset, filter_users.limit
     )
-    users = users.all()
     return {'users': users}
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
 async def create_user(user: UserSchema, session: Session):
-    db_user = await session.scalar(
-        select(User).where(
-            (User.user_nickname == user.user_nickname)
-            | (User.user_email == user.user_email)
-        )
+    db_user = await UserRepository.get_user_by_nickname_or_email(
+        session, user.user_nickname, user.user_email
     )
 
     if db_user:
@@ -59,44 +55,36 @@ async def create_user(user: UserSchema, session: Session):
             )
 
     hashed_password = get_password_hash(user.user_password)
-
-    db_user = User(
+    new_user = User(
         user_name=user.user_name,
         user_nickname=user.user_nickname,
         user_email=user.user_email,
         user_password=hashed_password,
     )
-    session.add(db_user)
-    await session.commit()
-    await session.refresh(db_user)
-
-    return db_user
+    return await UserRepository.create_user(session, new_user)
 
 
 @router.put('/{user_id}', response_model=UserPublic)
 async def update_user(
-    user_id: int,
-    user: UserSchema,
-    session: Session,
-    current_user: CurrentUser,
+    user_id: int, user: UserSchema, session: Session, current_user: CurrentUser
 ):
     if current_user.user_id != user_id:
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN, detail='Not enough permissions'
         )
 
+    user_data = {
+        'user_name': user.user_name,
+        'user_nickname': user.user_nickname,
+        'user_password': get_password_hash(user.user_password),
+        'user_email': user.user_email,
+    }
+
     try:
-        current_user.user_name = user.user_name
-        current_user.user_nickname = user.user_nickname
-        current_user.user_password = get_password_hash(user.user_password)
-        current_user.user_email = user.user_email
-        await session.commit()
-        await session.refresh(current_user)
-
-        return current_user
-
+        return await UserRepository.update_user(
+            session, current_user, user_data
+        )
     except IntegrityError:
-        await session.rollback()
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT,
             detail='Nickname or Email already exists',
@@ -105,16 +93,12 @@ async def update_user(
 
 @router.delete('/{user_id}', response_model=Message)
 async def delete_user(
-    user_id: int,
-    session: Session,
-    current_user: CurrentUser,
+    user_id: int, session: Session, current_user: CurrentUser
 ):
     if current_user.user_id != user_id:
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN, detail='Not enough permissions'
         )
 
-    await session.delete(current_user)
-    await session.commit()
-
+    await UserRepository.delete_user(session, current_user)
     return {'message': 'User deleted'}

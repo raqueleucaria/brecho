@@ -1,23 +1,52 @@
-# from sqlalchemy.orm import Session
-# from model.user import User
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
-# class UserRepository:
-#     @staticmethod
-#     def create(db: Session, user: User) -> User:
-#         db.add(user)
-#         db.commit()
-#         db.refresh(user)
-#         return user
+from src.model.user import User
 
-#     @staticmethod
-#     def get_by_id(db: Session, user_id: int) -> User | None:
-#         return db.query(User).filter(User.user_id == user_id).first()
 
-#     @staticmethod
-#     def get_all(db: Session) -> list[User]:
-#         return db.query(User).all()
+class UserRepository:
+    @staticmethod
+    async def get_users(
+        session: AsyncSession, offset: int = 0, limit: int = 10
+    ):
+        result = await session.scalars(
+            select(User).offset(offset).limit(limit)
+        )
+        return result.all()
 
-#     @staticmethod
-#     def delete(db: Session, user: User):
-#         db.delete(user)
-#         db.commit()
+    @staticmethod
+    async def get_user_by_nickname_or_email(
+        session: AsyncSession, nickname: str, email: str
+    ):
+        return await session.scalar(
+            select(User).where(
+                (User.user_nickname == nickname) | (User.user_email == email)
+            )
+        )
+
+    @staticmethod
+    async def create_user(session: AsyncSession, user: User):
+        session.add(user)
+        await session.commit()
+        await session.refresh(user)
+        return user
+
+    @staticmethod
+    async def update_user(
+        session: AsyncSession, db_user: User, user_data: dict
+    ):
+        for key, value in user_data.items():
+            setattr(db_user, key, value)
+        try:
+            await session.commit()
+            await session.refresh(db_user)
+            return db_user
+        except IntegrityError:
+            await session.rollback()
+            raise
+
+    @staticmethod
+    async def delete_user(session: AsyncSession, db_user: User):
+        await session.delete(db_user)
+        await session.commit()
