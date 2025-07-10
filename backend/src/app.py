@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import FastAPI
 
-from src.router import authRouter, userRouter
+from src.router import addressRouter, authRouter, sellerRouter, userRouter
 from src.schema.messageSchema import Message
 
 app = FastAPI(
@@ -17,6 +17,8 @@ app = FastAPI(
 
 app.include_router(userRouter.router)
 app.include_router(authRouter.router)
+app.include_router(addressRouter.router)
+app.include_router(sellerRouter.router)
 
 
 @app.get('/', status_code=HTTPStatus.OK, response_model=Message)

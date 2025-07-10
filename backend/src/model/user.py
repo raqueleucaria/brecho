@@ -1,7 +1,9 @@
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import table_registry
+
+from .address import Address
 
 
 @table_registry.mapped_as_dataclass
@@ -24,3 +26,10 @@ class User:
         String(10), nullable=False
     )
     user_phone_number: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    # Relationship
+    addresses: Mapped[list['Address']] = relationship(
+        init=False,
+        cascade='all, delete-orphan',
+        lazy='selectin',
+    )

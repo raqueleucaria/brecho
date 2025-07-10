@@ -3,6 +3,7 @@ from dataclasses import asdict
 import pytest
 from sqlalchemy import create_engine, select, text
 
+from src.model.address import Address
 from src.model.user import User
 from src.settings import Settings
 
@@ -43,4 +44,63 @@ async def test_create_user(session):
         'user_phone_country_code': '+55',
         'user_phone_state_code': '11',
         'user_phone_number': '123456789',
+        'addresses': [],
     }
+
+
+@pytest.mark.asyncio
+async def test_create_address(session, user):
+    address = Address(
+        address_country='Brasil',
+        address_zip_code='12345-678',
+        address_state='SP',
+        address_city='São Paulo',
+        address_neighborhood='Centro',
+        address_street='Rua Exemplo',
+        address_number='123',
+        address_complement='Apto 456',
+        user_id=user.user_id,
+    )
+
+    session.add(address)
+    await session.commit()
+
+    address = await session.scalar(select(Address))
+
+    assert asdict(address) == {
+        'address_id': 1,
+        'address_country': 'Brasil',
+        'address_zip_code': '12345-678',
+        'address_state': 'SP',
+        'address_city': 'São Paulo',
+        'address_neighborhood': 'Centro',
+        'address_street': 'Rua Exemplo',
+        'address_number': '123',
+        'address_complement': 'Apto 456',
+        'user_id': 1,
+    }
+
+
+@pytest.mark.asyncio
+async def test_user_address_relationship(session, user: User):
+    address = Address(
+        address_country='Brasil',
+        address_zip_code='12345-678',
+        address_state='SP',
+        address_city='São Paulo',
+        address_neighborhood='Centro',
+        address_street='Rua Exemplo',
+        address_number='123',
+        address_complement='Apto 456',
+        user_id=user.user_id,
+    )
+
+    session.add(address)
+    await session.commit()
+    await session.refresh(user)
+
+    user = await session.scalar(
+        select(User).where(User.user_id == user.user_id)
+    )
+
+    assert user.addresses == [address]

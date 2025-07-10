@@ -1,9 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import table_registry
 
-from .user import User
+if TYPE_CHECKING:
+    pass
 
 
 @table_registry.mapped_as_dataclass
@@ -22,6 +25,8 @@ class Address:
     address_number: Mapped[str] = mapped_column(String(5), nullable=False)
     address_complement: Mapped[str] = mapped_column(String(255), nullable=True)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey(User.user_id, ondelete='RESTRICT', onupdate='RESTRICT'),
+        ForeignKey(
+            'tbl_user.user_id', ondelete='RESTRICT', onupdate='RESTRICT'
+        ),
         nullable=False,
     )
