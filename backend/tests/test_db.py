@@ -45,6 +45,8 @@ async def test_create_user(session):
         'user_phone_state_code': '11',
         'user_phone_number': '123456789',
         'addresses': [],
+        'client_profile': None,
+        'seller_profile': None,
     }
 
 
