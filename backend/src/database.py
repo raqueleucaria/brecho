@@ -15,11 +15,3 @@ async def get_session():
 
 
 table_registry = registry()
-
-
-# modificando o get_session para usar AsyncSession
-#  que é compatível com operações assíncronas
-# "expire_on_commit=False":
-# é usado para evitar que os objetos sejam expirados após o commit
-# permitindo que sejam usados imediatamente após a transação
-# evitando novas consultas ao banco de dados para acessar os mesmos objetos.

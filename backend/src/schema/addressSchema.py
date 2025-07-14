@@ -18,3 +18,16 @@ class AddressPublic(AddressSchema):
 
 class AddressList(AddressPublic):
     addresses: list[AddressPublic]
+
+
+class AddressUpdate(AddressSchema):
+    address_country: str | None = None
+    address_zip_code: str | None = None
+    address_state: str | None = None
+    address_city: str | None = None
+    address_neighborhood: str | None = None
+    address_street: str | None = None
+    address_number: (
+        constr(min_length=1, max_length=5, pattern=r'^\d+$') | None
+    ) = None
+    address_complement: str | None = None

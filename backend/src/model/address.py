@@ -1,12 +1,7 @@
-from typing import TYPE_CHECKING
-
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import table_registry
-
-if TYPE_CHECKING:
-    pass
 
 
 @table_registry.mapped_as_dataclass

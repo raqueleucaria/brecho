@@ -11,7 +11,7 @@ from src.app import app
 from src.database import get_session, table_registry
 from src.security import get_password_hash
 
-from .factories import UserFactory
+from .factories import AddressFactory, UserFactory
 
 
 @pytest.fixture
@@ -100,3 +100,50 @@ def token(client, user):
         },
     )
     return response.json()['access_token']
+
+
+@pytest.fixture
+def other_token(client, other_user):
+    response = client.post(
+        '/auth/token',
+        data={
+            'username': other_user.user_email,
+            'password': other_user.clear_password,
+        },
+    )
+    return response.json()['access_token']
+
+
+@pytest_asyncio.fixture
+async def address(session, user):
+    address = AddressFactory(user=user)
+    session.add(address)
+    await session.commit()
+    await session.refresh(address)
+
+    address.clear_password = user.clear_password
+
+    return address
+
+
+@pytest_asyncio.fixture
+async def other_address(session, other_user):
+    address = AddressFactory(user_id=other_user.user_id)
+    session.add(address)
+    await session.commit()
+    await session.refresh(address)
+
+    address.clear_password = other_user.clear_password
+
+    return address
+
+
+@pytest_asyncio.fixture
+async def addresses(session, user):
+    address = AddressFactory(user_id=user.user_id)
+    session.add_all(addresses)
+    await session.commit()
+    for address in addresses:
+        await session.refresh(address)
+
+    return addresses

@@ -1,5 +1,7 @@
 from http import HTTPStatus
+from unittest.mock import patch
 
+from src.repository.clientRepository import ClientRepository
 from src.schema.userSchema import UserPublic
 
 
@@ -162,3 +164,26 @@ def test_delete_user_with_wrong_user(client, other_user, token):
     )
     assert response.status_code == HTTPStatus.FORBIDDEN
     assert response.json() == {'detail': 'Not enough permissions'}
+
+
+def test_create_user_exception(client):
+    with patch.object(
+        ClientRepository, 'create_client_for_user', side_effect=Exception
+    ):
+        response = client.post(
+            '/user/',
+            json={
+                'user_name': 'test_user',
+                'user_nickname': 'test_nick',
+                'user_email': 'test@email.com',
+                'user_password': 'password',
+                'user_phone_country_code': '+55',
+                'user_phone_state_code': '11',
+                'user_phone_number': '123456789',
+            },
+        )
+
+    assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+    assert response.json() == {
+        'detail': 'An error occurred while creating the user'
+    }
