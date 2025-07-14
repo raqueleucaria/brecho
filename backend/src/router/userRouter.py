@@ -74,7 +74,7 @@ async def create_user(user: UserSchema, session: Session):
 
         return create_user
 
-    except Expection:
+    except Exception:
         await session.rollback()
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,

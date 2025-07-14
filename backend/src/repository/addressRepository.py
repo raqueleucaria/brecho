@@ -43,7 +43,6 @@ class AddressRepository:
         result = await session.execute(stmt)
         return result.scalar_one_or_none()
 
-
     @staticmethod
     async def create_address(
         session: AsyncSession, address_data: dict, user_id: int
