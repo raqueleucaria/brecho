@@ -43,12 +43,6 @@ class AddressRepository:
         result = await session.execute(stmt)
         return result.scalar_one_or_none()
 
-    @staticmethod
-    async def create_address(session: AsyncSession, address: Address):
-        session.add(address)
-        await session.commit()
-        await session.refresh(address)
-        return address
 
     @staticmethod
     async def create_address(
