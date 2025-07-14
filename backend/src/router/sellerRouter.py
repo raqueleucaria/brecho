@@ -25,7 +25,7 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 @router.get('/', response_model=SellerList, status_code=HTTPStatus.OK)
 async def list_sellers(
     session: Session,
-    pagination: FilterPage = Depends(),
+    pagination: Annotated[FilterPage, Depends()],
 ):
     sellers_from_db = await SellerRepository.get_all_sellers(
         session, offset=pagination.offset, limit=pagination.limit
