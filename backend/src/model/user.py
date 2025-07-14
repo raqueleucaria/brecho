@@ -1,9 +1,14 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import table_registry
 
-from .address import Address
+if TYPE_CHECKING:
+    from .address import Address
+    from .client import Client
+    from .seller import Seller
 
 
 @table_registry.mapped_as_dataclass
@@ -32,4 +37,14 @@ class User:
         init=False,
         cascade='all, delete-orphan',
         lazy='selectin',
+    )
+
+    client: Mapped[list['Client']] = relationship(
+        init=False,
+        back_populates='user',
+        lazy='selectin',
+    )
+
+    user: Mapped[list['Seller']] = relationship(
+        init=False, back_populates='user', lazy='selectin'
     )

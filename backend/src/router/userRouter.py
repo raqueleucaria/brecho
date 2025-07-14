@@ -7,10 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_session
 from src.model.user import User
+from src.repository.clientRepository import ClientRepository
 from src.repository.userRepository import UserRepository
+from src.schema.filterSchema import FilterPage
 from src.schema.messageSchema import Message
 from src.schema.userSchema import (
-    FilterPage,
     UserList,
     UserPublic,
     UserSchema,
@@ -21,7 +22,6 @@ from src.security import (
 )
 
 router = APIRouter(prefix='/user', tags=['user'])
-
 Session = Annotated[AsyncSession, Depends(get_session)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
@@ -54,17 +54,32 @@ async def create_user(user: UserSchema, session: Session):
                 detail='Email already exists',
             )
 
-    hashed_password = get_password_hash(user.user_password)
-    new_user = User(
-        user_name=user.user_name,
-        user_nickname=user.user_nickname,
-        user_email=user.user_email,
-        user_password=hashed_password,
-        user_phone_country_code=user.user_phone_country_code,
-        user_phone_state_code=user.user_phone_state_code,
-        user_phone_number=user.user_phone_number,
-    )
-    return await UserRepository.create_user(session, new_user)
+    try:
+        hashed_password = get_password_hash(user.user_password)
+        new_user = User(
+            user_name=user.user_name,
+            user_nickname=user.user_nickname,
+            user_email=user.user_email,
+            user_password=hashed_password,
+            user_phone_country_code=user.user_phone_country_code,
+            user_phone_state_code=user.user_phone_state_code,
+            user_phone_number=user.user_phone_number,
+        )
+
+        create_user = await UserRepository.create_user(session, new_user)
+        await ClientRepository.create_client_for_user(session, create_user)
+
+        await session.commit()
+        await session.refresh(create_user)
+
+        return create_user
+
+    except Expection:
+        await session.rollback()
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail='An error occurred while creating the user',
+        )
 
 
 @router.put('/{user_id}', response_model=UserPublic)
