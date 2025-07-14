@@ -23,13 +23,13 @@ class SellerRepository:
         )
 
     @staticmethod
-    async def get_all_sellers(
+    async def get_sellers(
         session: AsyncSession, offset: int = 0, limit: int = 100
-    ) -> list[Seller]:
+    ):
         result = await session.scalar(
             select(Seller).offset(offset).limit(limit)
         )
-        return list(result.all())
+        return result.all()
 
     @staticmethod
     async def create_seller(

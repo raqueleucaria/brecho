@@ -39,12 +39,18 @@ class User:
         lazy='selectin',
     )
 
-    client: Mapped[list['Client']] = relationship(
+    client_profile: Mapped[list['Client']] = relationship(
         init=False,
         back_populates='user',
+        cascade='all, delete-orphan',
         lazy='selectin',
+        uselist=False,
     )
 
-    user: Mapped[list['Seller']] = relationship(
-        init=False, back_populates='user', lazy='selectin'
+    seller_profile: Mapped[list['Seller']] = relationship(
+        init=False,
+        back_populates='user',
+        cascade='all, delete-orphan',
+        lazy='selectin',
+        uselist=False,
     )

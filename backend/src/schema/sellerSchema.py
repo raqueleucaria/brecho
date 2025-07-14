@@ -46,4 +46,4 @@ class SellerPrivate(SellerPublic):
 
 
 class SellerList(BaseModel):
-    clients: list[SellerPublic]
+    sellers: list[SellerPublic]

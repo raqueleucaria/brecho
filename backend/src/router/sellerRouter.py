@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_session
@@ -25,12 +25,12 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 @router.get('/', response_model=SellerList, status_code=HTTPStatus.OK)
 async def list_sellers(
     session: Session,
-    pagination: Annotated[FilterPage, Depends()],
+    pagination: Annotated[FilterPage, Query()],
 ):
-    sellers_from_db = await SellerRepository.get_all_sellers(
-        session, offset=pagination.offset, limit=pagination.limit
+    sellers = await SellerRepository.get_sellers(
+        session, pagination.offset, pagination.limit
     )
-    return {'sellers': sellers_from_db}
+    return {'sellers': sellers}
 
 
 @router.get('/{seller_id}', response_model=SellerPublic)

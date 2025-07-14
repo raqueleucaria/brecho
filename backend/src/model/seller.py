@@ -1,11 +1,13 @@
 import enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Enum, ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import table_registry
 
-from .user import User
+if TYPE_CHECKING:
+    from .user import User
 
 
 class SellerStatus(enum.Enum):
@@ -25,7 +27,9 @@ class Seller:
     seller_id: Mapped[int] = mapped_column(init=False, primary_key=True)
 
     user_id: Mapped[int] = mapped_column(
-        ForeignKey(User.user_id, ondelete='RESTRICT', onupdate='RESTRICT'),
+        ForeignKey(
+            'tbl_user.user_id', ondelete='RESTRICT', onupdate='RESTRICT'
+        ),
         nullable=False,
     )
 
@@ -43,4 +47,9 @@ class Seller:
         nullable=False,
         default=SellerStatus.inactive,
         server_default='inactive',
+    )
+
+    user: Mapped['User'] = relationship(
+        back_populates='seller_profile',
+        init=False,
     )
