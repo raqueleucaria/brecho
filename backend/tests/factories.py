@@ -2,6 +2,9 @@ import factory
 import factory.fuzzy
 
 from src.model.address import Address
+from src.model.category import Category
+from src.model.color import Color
+from src.model.seller import Seller
 from src.model.user import User
 
 
@@ -43,3 +46,32 @@ class AddressFactory(factory.Factory):
     user_id = factory.LazyAttribute(
         lambda obj: obj.user_id if hasattr(obj, 'user_id') else 1
     )
+
+
+class SellerFactory(factory.Factory):
+    class Meta:
+        model = Seller
+
+    seller_description = factory.Sequence(lambda n: f'Description {n}')
+    seller_bank_account = factory.Sequence(lambda n: f'{n:07d}')
+    seller_bank_agency = factory.Sequence(lambda n: f'{n:05d}')
+    seller_bank_name = factory.Sequence(lambda n: f'Bank {n}')
+    seller_bank_type = factory.Iterator(['checking', 'savings'])
+    seller_status = factory.Iterator(['active', 'inactive'])
+    user_id = factory.LazyAttribute(
+        lambda obj: obj.user_id if hasattr(obj, 'user_id') else 1
+    )
+
+
+class CategoryFactory(factory.Factory):
+    class Meta:
+        model = Category
+
+    category_name = factory.Sequence(lambda n: f'Category {n + 1}')
+
+
+class ColorFactory(factory.Factory):
+    class Meta:
+        model = Color
+
+    color_name = factory.Sequence(lambda n: f'Color {n + 1}')

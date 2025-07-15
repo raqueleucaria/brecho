@@ -28,7 +28,6 @@ class SellerUpdate(BaseModel):
 
 class SellerPublic(BaseModel):
     seller_id: int
-    seller_id: int
     seller_description: Optional[str]
     seller_status: SellerStatus
     user_id: int

@@ -8,3 +8,10 @@ class CategorySchema(BaseModel):
 
 class CategoryList(BaseModel):
     categories: list[CategorySchema]
+
+
+class CategoryPublic(BaseModel):
+    category_name: str
+
+    class Config:
+        from_attributes = True

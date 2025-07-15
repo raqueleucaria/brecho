@@ -70,3 +70,36 @@
 - [Populate](./script/populate.sql)
 - [Delete](./script/delete.sql)
   
+
+
+
+
+/
+├── backend
+│   ├── src/
+│   │   ├── schema/
+│   │   │   └── authSchema.py
+│   │   │   └── userSchema.py
+│   │   │   └── addressSchema.py
+│   │   ├── database.py           
+│   │   ├── models/
+│   │   │   ├── __init__.py       
+│   │   │   ├── address.py         
+│   │   │   └── user.py           
+│   │   ├── repositories/
+│   │   │   ├── addressRouter.py                
+│   │   │   └── userRepository.py         
+│   │   ├── routers/
+│   │   │   └── userRouter.py           
+│   │   │   └── authRouter.py         
+│   │   │   └── address.py  
+│   │   ├── app.py
+│   │   ├── database.py  
+│   │   ├── security.py  
+│   │   ├── settings.py     
+│   └── tests/
+│   └── docs/
+├── Dockerfile
+├── docker-compose.yml
+├── .env
+├── ...

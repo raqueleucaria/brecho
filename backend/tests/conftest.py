@@ -11,7 +11,13 @@ from src.app import app
 from src.database import get_session, table_registry
 from src.security import get_password_hash
 
-from .factories import AddressFactory, UserFactory
+from .factories import (
+    AddressFactory,
+    CategoryFactory,
+    ColorFactory,
+    SellerFactory,
+    UserFactory,
+)
 
 
 @pytest.fixture
@@ -147,3 +153,34 @@ async def addresses(session, user):
         await session.refresh(address)
 
     return addresses
+
+
+@pytest_asyncio.fixture
+async def seller(session, user):
+    seller = SellerFactory(user_id=user.user_id)
+    session.add(seller)
+    await session.commit()
+    await session.refresh(seller)
+
+    return seller
+
+
+@pytest_asyncio.fixture
+async def category(session):
+    category = CategoryFactory()
+    session.add(category)
+    await session.commit()
+    await session.refresh(category)
+
+    return category
+
+
+@pytest_asyncio.fixture
+async def color(session):
+    color = [ColorFactory() for _ in range(3)]
+    session.add_all(color)
+    await session.commit()
+    for color in color:
+        await session.refresh(color)
+
+    return color

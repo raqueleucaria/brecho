@@ -6,16 +6,12 @@ from src.model.color import Color
 
 class ColorRepository:
     @staticmethod
-    async def get_all_colors(
-        session: AsyncSession, offset: int = 0, limit: int = 10
-    ):
-        result = await session.scalars(
-            select(Color).offset(offset).limit(limit)
-        )
+    async def get_colors(session: AsyncSession):
+        result = await session.scalars(select(Color))
         return result.all()
 
     @staticmethod
-    async def get_by_id(session: AsyncSession, color_id: int):
+    async def get_color_by_id(session: AsyncSession, color_id: int):
         result = await session.execute(
             select(Color).where(Color.color_id == color_id)
         )

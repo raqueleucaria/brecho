@@ -6,16 +6,12 @@ from src.model.category import Category
 
 class CategoryRepository:
     @staticmethod
-    async def get_all_categories(
-        session: AsyncSession, offset: int = 0, limit: int = 10
-    ):
-        result = await session.scalars(
-            select(Category).offset(offset).limit(limit)
-        )
+    async def get_categories(session: AsyncSession):
+        result = await session.scalars(select(Category))
         return result.all()
 
     @staticmethod
-    async def get_by_id(session: AsyncSession, category_id: int):
+    async def get_category_by_id(session: AsyncSession, category_id: int):
         result = await session.execute(
             select(Category).where(Category.category_id == category_id)
         )
