@@ -166,6 +166,16 @@ async def seller(session, user):
 
 
 @pytest_asyncio.fixture
+async def other_seller(session, other_user):
+    seller = SellerFactory(user_id=other_user.user_id)
+    session.add(seller)
+    await session.commit()
+    await session.refresh(seller)
+
+    return seller
+
+
+@pytest_asyncio.fixture
 async def category(session):
     category = CategoryFactory()
     session.add(category)

@@ -41,3 +41,19 @@ INSERT INTO `tbl_category` (`category_id`, `category_name`) VALUES
 (13, 'Jewelry'),
 (14, 'Sunglasses'),
 (15, 'Belts');
+
+-- -----------------------------------------------------
+-- Table `db_brecho`.`tbl_color`
+-- -----------------------------------------------------
+
+INSERT INTO `tbl_color` (`color_id`, `color_name`) VALUES
+(1, 'Red'),
+(2, 'Blue'),
+(3, 'Green'),
+(4, 'Black'),
+(5, 'White'),
+(6, 'Yellow'),
+(7, 'Pink'),
+(8, 'Purple'),
+(9, 'Orange'),
+(10, 'Gray');

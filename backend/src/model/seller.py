@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.database import table_registry
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .product import Product
     from .user import User
 
 
@@ -52,4 +53,11 @@ class Seller:
     user: Mapped['User'] = relationship(
         back_populates='seller_profile',
         init=False,
+    )
+
+    products: Mapped[list['Product']] = relationship(
+        back_populates='seller',
+        init=False,
+        cascade='all, delete-orphan',
+        lazy='selectin',
     )

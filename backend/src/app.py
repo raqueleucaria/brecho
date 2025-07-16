@@ -7,6 +7,7 @@ from src.router import (
     authRouter,
     categoryRouter,
     colorRouter,
+    productRouter,
     sellerRouter,
     userRouter,
 )
@@ -28,6 +29,7 @@ app.include_router(addressRouter.router)
 app.include_router(sellerRouter.router)
 app.include_router(categoryRouter.router)
 app.include_router(colorRouter.router)
+app.include_router(productRouter.router)
 
 
 @app.get('/', status_code=HTTPStatus.OK, response_model=Message)

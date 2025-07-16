@@ -1,13 +1,19 @@
 import enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DECIMAL, Enum, ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import table_registry
 
-from .category import Category
-from .color import Color
-from .seller import Seller
+# from .category import Category
+# from .color import Color
+# from .seller import Seller
+
+if TYPE_CHECKING:  # pragma: no cover
+    from .category import Category
+    from .color import Color
+    from .seller import Seller
 
 
 class ProductStatus(enum.Enum):
@@ -69,16 +75,22 @@ class Product:
     )
     category_id: Mapped[int] = mapped_column(
         ForeignKey(
-            Category.category_id, ondelete='RESTRICT', onupdate='RESTRICT'
+            'tbl_category.category_id',
+            ondelete='RESTRICT',
+            onupdate='RESTRICT',
         ),
         nullable=False,
     )
     color_id: Mapped[int] = mapped_column(
-        ForeignKey(Color.color_id, ondelete='RESTRICT', onupdate='RESTRICT'),
+        ForeignKey(
+            'tbl_color.color_id', ondelete='RESTRICT', onupdate='RESTRICT'
+        ),
         nullable=False,
     )
     seller_id: Mapped[int] = mapped_column(
-        ForeignKey(Seller.seller_id, ondelete='RESTRICT', onupdate='RESTRICT'),
+        ForeignKey(
+            'tbl_seller.seller_id', ondelete='RESTRICT', onupdate='RESTRICT'
+        ),
         nullable=False,
     )
 
@@ -87,4 +99,23 @@ class Product:
         nullable=False,
         default=ProductStatus.available,
         server_default='available',
+    )
+
+    seller: Mapped['Seller'] = relationship(
+        back_populates='products',
+        init=False,
+    )
+
+    category: Mapped['Category'] = relationship(
+        init=False,
+        back_populates='products',
+        lazy='selectin',
+        uselist=False,
+    )
+
+    color: Mapped['Color'] = relationship(
+        init=False,
+        back_populates='products',
+        lazy='selectin',
+        uselist=False,
     )
