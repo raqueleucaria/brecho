@@ -20,3 +20,24 @@
 USE `db_brecho`;
 
 -- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Table `db_brecho`.`tbl_category`
+-- -----------------------------------------------------
+
+INSERT INTO `tbl_category` (`category_id`, `category_name`) VALUES
+(1, 'Dresses'),
+(2, 'T-shirts'),
+(3, 'Pants'),
+(4, 'Shoes'),
+(5, 'Accessories'),
+(6, 'Bags'),
+(7, 'Jackets'),
+(8, 'Skirts'),
+(9, 'Shorts'),
+(10, 'Sweaters'),
+(11, 'Suits'),
+(12, 'Hats'),
+(13, 'Jewelry'),
+(14, 'Sunglasses'),
+(15, 'Belts');

@@ -8,7 +8,7 @@ from src.database import get_session
 from src.repository.categoryRepository import CategoryRepository
 from src.schema.categorySchema import (
     CategoryList,
-    CategoryPublic,
+    CategorySchema,
 )
 
 router = APIRouter(prefix='/category', tags=['category'])
@@ -21,17 +21,17 @@ async def get_all_categories(session: Session):
     return {'categories': categories}
 
 
-@router.get('/{category_id}', response_model=CategoryPublic)
+@router.get('/{category_id}', response_model=CategorySchema)
 async def get_category_by_id(category_id: int, session: Session):
     category = await CategoryRepository.get_category_by_id(
         session, category_id
     )
     if not category:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
-    return CategoryPublic.model_validate(category)
+    return CategorySchema.model_validate(category)
 
 
-@router.get('/name/{category_name}', response_model=CategoryPublic)
+@router.get('/name/{category_name}', response_model=CategorySchema)
 async def get_category_by_name(category_name: str, session: Session):
     decoded_name = category_name.replace('%20', ' ')
 
