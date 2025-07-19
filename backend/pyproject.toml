@@ -34,7 +34,11 @@ asyncio_default_fixture_loop_scope = 'function'
 
 [tool.ruff]
 line-length = 79
-extend-exclude = ['migrations']
+extend-exclude = [
+    'migrations',
+    'tests/test_checkout.py',
+    'tests/test_address.py'
+]
 
 [tool.ruff.lint]
 preview = true

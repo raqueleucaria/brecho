@@ -60,9 +60,7 @@ async def update_order_status(
     order_id: int,
     status_update: OrderStatusUpdateSchema,
     session: Session,
-    # user: CurrentUser # Descomente se precisar de validação de admin no futuro
 ):
-    """Atualiza o status de pagamento/pedido (simulado)."""
     order_service = OrderService(session)
     return await order_service.update_order_status(order_id, status_update)
 
@@ -72,9 +70,7 @@ async def update_tracking_status(
     order_id: int,
     tracking_update: OrderTrackingUpdateSchema,
     session: Session,
-    # user: CurrentUser # Descomente se precisar de validação de admin no futuro
 ):
-    """Atualiza o status de rastreamento do pedido (simulado)."""
     order_service = OrderService(session)
     return await order_service.update_tracking_status(
         order_id, tracking_update
