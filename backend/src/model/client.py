@@ -6,8 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.database import table_registry
 
 if TYPE_CHECKING:  # pragma: no cover
-    from .user import User
     from .cart_want import CartWant
+    from .user import User
 
 
 @table_registry.mapped_as_dataclass

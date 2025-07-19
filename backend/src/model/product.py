@@ -11,10 +11,10 @@ from src.database import table_registry
 # from .seller import Seller
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .cart_want import CartWant
     from .category import Category
     from .color import Color
     from .seller import Seller
-    from .cart_want import CartWant
 
 
 class ProductStatus(enum.Enum):
@@ -120,7 +120,7 @@ class Product:
         lazy='selectin',
         uselist=False,
     )
-    
+
     cart_wants: Mapped[list['CartWant']] = relationship(
         back_populates='product',
         init=False,

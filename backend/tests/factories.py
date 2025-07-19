@@ -2,7 +2,9 @@ import factory
 import factory.fuzzy
 
 from src.model.address import Address
+from src.model.cart_want import CartWant
 from src.model.category import Category
+from src.model.client import Client
 from src.model.color import Color
 from src.model.product import Product
 from src.model.seller import Seller
@@ -64,6 +66,15 @@ class SellerFactory(factory.Factory):
     )
 
 
+class ClientFactory(factory.Factory):
+    class Meta:
+        model = Client
+
+    user_id = factory.LazyAttribute(
+        lambda obj: obj.user_id if hasattr(obj, 'user_id') else 1
+    )
+
+
 class CategoryFactory(factory.Factory):
     class Meta:
         model = Category
@@ -88,13 +99,26 @@ class ProductFactory(factory.Factory):
     product_condition = factory.Iterator(['new', 'used'])
     product_gender = factory.Iterator(['female', 'male', 'unisex'])
     product_size = factory.Iterator(['S', 'M', 'L', 'XL'])
-    category_id = factory.LazyAttribute(
-        lambda obj: obj.category_id if hasattr(obj, 'category_id') else 1
-    )
-    color_id = factory.LazyAttribute(
-        lambda obj: obj.color_id if hasattr(obj, 'color_id') else 1
-    )
+    # category_id = factory.LazyAttribute(
+    #     lambda obj: obj.category_id if hasattr(obj, 'category_id') else 1
+    # )
+    # color_id = factory.LazyAttribute(
+    #     lambda obj: obj.color_id if hasattr(obj, 'color_id') else 1
+    # )
     product_status = factory.Iterator(['available', 'unavailable'])
     seller_id = factory.LazyAttribute(
         lambda obj: obj.seller_id if hasattr(obj, 'seller_id') else 1
+    )
+
+
+class CartWantFactory(factory.Factory):
+    class Meta:
+        model = CartWant
+
+    product_id = factory.LazyAttribute(
+        lambda obj: obj.product_id if hasattr(obj, 'product_id') else 1
+    )
+    want_type = factory.Iterator(['cart', 'wishlist'])
+    client_id = factory.LazyAttribute(
+        lambda obj: obj.client_id if hasattr(obj, 'client_id') else 1
     )

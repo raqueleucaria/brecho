@@ -13,7 +13,9 @@ from src.security import get_password_hash
 
 from .factories import (
     AddressFactory,
+    CartWantFactory,
     CategoryFactory,
+    ClientFactory,
     ColorFactory,
     ProductFactory,
     SellerFactory,
@@ -209,3 +211,40 @@ async def product(session, category, color, seller):
     await session.refresh(product)
 
     return product
+
+
+# @pytest_asyncio.fixture
+# async def other_product(session, other_seller, category, color):
+#     product = ProductFactory(
+#         seller_id=other_seller.seller_id,
+#         category_id=category.category_id,
+#         color_id=color.color_id,
+#     )
+#     session.add(product)
+#     await session.commit()
+#     await session.refresh(product)
+
+#     return product
+
+
+@pytest_asyncio.fixture
+async def client_profile(session, user):
+    client = ClientFactory(user_id=user.user_id)
+    session.add(client)
+    await session.commit()
+    await session.refresh(client)
+
+    return client
+
+
+@pytest_asyncio.fixture
+async def cart_want(session, product, client_profile):
+    cart_want = CartWantFactory(
+        product_id=product.product_id,
+        client_id=client_profile.client_id,
+    )
+    session.add(cart_want)
+    await session.commit()
+    await session.refresh(cart_want)
+
+    return cart_want

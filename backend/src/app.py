@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from src.router import (
     addressRouter,
     authRouter,
+    cartWantRouter,
     categoryRouter,
     colorRouter,
     productRouter,
@@ -30,6 +31,7 @@ app.include_router(sellerRouter.router)
 app.include_router(categoryRouter.router)
 app.include_router(colorRouter.router)
 app.include_router(productRouter.router)
+app.include_router(cartWantRouter.router)
 
 
 @app.get('/', status_code=HTTPStatus.OK, response_model=Message)

@@ -33,14 +33,14 @@ class CartWant:
     )
     want_type: Mapped[WantType] = mapped_column(Enum(WantType), nullable=False)
 
-    product: Mapped[Product] = relationship(
+    product: Mapped['Product'] = relationship(
         init=False,
         back_populates='cart_wants',
         uselist=False,
         lazy='joined',
     )
 
-    client: Mapped[Client] = relationship(
+    client: Mapped['Client'] = relationship(
         init=False,
         back_populates='cart_wants',
         uselist=False,

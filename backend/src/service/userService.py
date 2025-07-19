@@ -1,8 +1,9 @@
 # src/service/user_service.py
 from http import HTTPStatus
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.model.client import Client
 from src.model.user import User
 from src.repository.userRepository import UserRepository
@@ -30,7 +31,9 @@ class UserService:
                 user_phone_number=user_schema.user_phone_number,
             )
 
-            created_user = await self.user_repo.create_user(self.session, new_user)
+            created_user = await self.user_repo.create_user(
+                self.session, new_user
+            )
 
             new_client = Client(user_id=created_user.user_id)
             self.session.add(new_client)
