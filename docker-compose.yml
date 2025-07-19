@@ -22,21 +22,22 @@ services:
             retries: 10
 
 
-    # api:
-    #     depends_on:
-    #         mysqldb: 
-    #             condition: service_healthy
-    #     build: .
-    #     image: backend
-    #     restart: unless-stopped
-    #     env_file: ./.env
-    #     environment:
-    #         - MYSQL_HOST=mysqldb
-    #         - MYSQL_LOCAL_PORT=${MYSQL_DOCKER_PORT}
-    #         - MYSQL_DATABASE=${MYSQL_DATABASE}
-    #         - MYSQL_USERNAME=${MYSQL_USERNAME}
-    #         - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    #     ports:
-    #         - ${PYTHON_LOCAL_PORT}:${PYTHON_LOCAL_PORT}
-    #     stdin_open: true
-    #     tty: true
+    api:
+        depends_on:
+            mysqldb: 
+                condition: service_healthy
+        image: backend
+        entrypoint: ./entrypoint.sh
+        build: .
+        restart: unless-stopped
+        env_file: ./.env
+        environment:
+            - MYSQL_HOST=mysqldb
+            - MYSQL_LOCAL_PORT=${MYSQL_DOCKER_PORT}
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USERNAME=${MYSQL_USERNAME}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        ports:
+            - ${PYTHON_LOCAL_PORT}:${PYTHON_LOCAL_PORT}
+        stdin_open: true
+        tty: true
