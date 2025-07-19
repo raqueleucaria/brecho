@@ -9,7 +9,7 @@ jobs:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       ALGORITHM: ${{ secrets.ALGORITHM }}
       MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-      ACCESS_TOKEN_EXPIRE_MINUTES=30
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
       MYSQL_LOCAL_PORT: ${{ secrets.MYSQL_LOCAL_PORT }}
       MYSQL_DOCKER_PORT: ${{ secrets.MYSQL_DOCKER_PORT }}
       MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
