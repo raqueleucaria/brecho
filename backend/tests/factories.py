@@ -4,6 +4,7 @@ import factory.fuzzy
 from src.model.address import Address
 from src.model.category import Category
 from src.model.color import Color
+from src.model.product import Product
 from src.model.seller import Seller
 from src.model.user import User
 
@@ -75,3 +76,25 @@ class ColorFactory(factory.Factory):
         model = Color
 
     color_name = factory.Sequence(lambda n: f'Color {n + 1}')
+
+
+class ProductFactory(factory.Factory):
+    class Meta:
+        model = Product
+
+    product_name = factory.Sequence(lambda n: f'Product {n + 1}')
+    product_description = factory.Sequence(lambda n: f'Description {n + 1}')
+    product_price = factory.fuzzy.FuzzyDecimal(10.0, 1000.0)
+    product_condition = factory.Iterator(['new', 'used'])
+    product_gender = factory.Iterator(['female', 'male', 'unisex'])
+    product_size = factory.Iterator(['S', 'M', 'L', 'XL'])
+    category_id = factory.LazyAttribute(
+        lambda obj: obj.category_id if hasattr(obj, 'category_id') else 1
+    )
+    color_id = factory.LazyAttribute(
+        lambda obj: obj.color_id if hasattr(obj, 'color_id') else 1
+    )
+    product_status = factory.Iterator(['available', 'unavailable'])
+    seller_id = factory.LazyAttribute(
+        lambda obj: obj.seller_id if hasattr(obj, 'seller_id') else 1
+    )

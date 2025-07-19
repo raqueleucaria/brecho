@@ -15,6 +15,7 @@ from .factories import (
     AddressFactory,
     CategoryFactory,
     ColorFactory,
+    ProductFactory,
     SellerFactory,
     UserFactory,
 )
@@ -194,3 +195,17 @@ async def color(session):
         await session.refresh(color)
 
     return color
+
+
+@pytest_asyncio.fixture
+async def product(session, category, color, seller):
+    product = ProductFactory(
+        seller_id=seller.seller_id,
+        category_id=category.category_id,
+        color_id=color.color_id,
+    )
+    session.add(product)
+    await session.commit()
+    await session.refresh(product)
+
+    return product
