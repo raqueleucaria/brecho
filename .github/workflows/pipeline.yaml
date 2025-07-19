@@ -4,12 +4,16 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       ALGORITHM: ${{ secrets.ALGORITHM }}
-      ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+      MYSQL_LOCAL_PORT: ${{ secrets.MYSQL_LOCAL_PORT }}
+      MYSQL_DOCKER_PORT: ${{ secrets.MYSQL_DOCKER_PORT }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
 
     steps:
       - name: Copia os arquivos do repositório
@@ -24,7 +28,7 @@ jobs:
         run: pipx install poetry
 
       - name: Instalar dependências
-        run: poetry install
+        run: cd backend && poetry install
 
       - name: Executar testes
-        run: poetry run task test
+        run: cd backend && poetry run task lint && poetry run task format && poetry run task test

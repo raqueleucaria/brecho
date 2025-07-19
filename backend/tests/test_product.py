@@ -157,7 +157,7 @@ async def test_update_product_no_data(client, token, user, product, seller):
     response = client.patch(
         f'/product/{product.product_id}',
         headers={'Authorization': f'Bearer {token}'},
-        json={},  
+        json={},
     )
 
     assert response.status_code == HTTPStatus.BAD_REQUEST
