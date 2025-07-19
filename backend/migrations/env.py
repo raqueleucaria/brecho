@@ -17,7 +17,7 @@ import src.model.product
 import src.model.cart_want
 import src.model.checkout
 import src.model.generate
-import src.model.analyse
+# import src.model.analyse
 import src.model.order_payment
 import src.model.card
 import src.model.pix
