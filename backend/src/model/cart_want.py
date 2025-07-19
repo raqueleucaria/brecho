@@ -1,6 +1,5 @@
-from typing import TYPE_CHECKING
-
 import enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Enum, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -28,7 +27,9 @@ class CartWant:
         primary_key=True,
     )
     client_id: Mapped[int] = mapped_column(
-        ForeignKey('tbl_client.client_id', ondelete='RESTRICT', onupdate='RESTRICT'),
+        ForeignKey(
+            'tbl_client.client_id', ondelete='RESTRICT', onupdate='RESTRICT'
+        ),
         primary_key=True,
     )
     want_type: Mapped[WantType] = mapped_column(Enum(WantType), nullable=False)

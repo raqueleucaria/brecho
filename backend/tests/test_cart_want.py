@@ -59,7 +59,9 @@ async def test_update_cart_want(
 ):
     user.client_profile = client_profile
 
-    url = f'/cart-want/?product_id={cart_want.product_id}&client_id={cart_want.client_id}'
+    url = f'/cart-want/?product_id={cart_want.product_id}&client_id={
+        cart_want.client_id
+    }'
     response = client.patch(
         url,
         headers={'Authorization': f'Bearer {token}'},
@@ -77,7 +79,9 @@ async def test_update_cart_want(
 
 def test_delete_cart_want(client, token, user, client_profile, cart_want):
     user.client_profile = client_profile
-    url = f'/cart-want/?product_id={cart_want.product_id}&client_id={cart_want.client_id}'
+    url = f'/cart-want/?product_id={cart_want.product_id}&client_id={
+        cart_want.client_id
+    }'
     response = client.delete(
         url,
         headers={'Authorization': f'Bearer {token}'},

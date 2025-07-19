@@ -7,6 +7,7 @@ from src.router import (
     authRouter,
     cartWantRouter,
     categoryRouter,
+    checkoutRouter,
     colorRouter,
     productRouter,
     sellerRouter,
@@ -32,6 +33,7 @@ app.include_router(categoryRouter.router)
 app.include_router(colorRouter.router)
 app.include_router(productRouter.router)
 app.include_router(cartWantRouter.router)
+app.include_router(checkoutRouter.router)
 
 
 @app.get('/', status_code=HTTPStatus.OK, response_model=Message)

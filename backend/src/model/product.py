@@ -6,14 +6,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import table_registry
 
-# from .category import Category
-# from .color import Color
-# from .seller import Seller
-
 if TYPE_CHECKING:  # pragma: no cover
     from .cart_want import CartWant
     from .category import Category
     from .color import Color
+    from .generate import Generate
     from .seller import Seller
 
 
@@ -126,4 +123,8 @@ class Product:
         init=False,
         lazy='selectin',
         cascade='all, delete-orphan',
+    )
+
+    generate_entries: Mapped[list['Generate']] = relationship(
+        back_populates='product', init=False
     )

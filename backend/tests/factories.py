@@ -14,7 +14,6 @@ from src.model.user import User
 class UserFactory(factory.Factory):
     class Meta:
         model = User
-        exclude = ('addresses', 'clients', 'sellers')
 
     user_name = factory.Sequence(lambda n: f'test{n}')
     user_nickname = factory.LazyAttribute(lambda obj: f'{obj.user_name}_nick')
@@ -24,18 +23,23 @@ class UserFactory(factory.Factory):
     user_password = factory.LazyAttribute(
         lambda obj: f'{obj.user_name}_password'
     )
-    user_phone_country_code = factory.LazyAttribute(lambda n: f'+{n}{n}')
-    user_phone_state_code = factory.LazyAttribute(lambda n: f'{n}{n}')
-    user_phone_number = factory.LazyAttribute(lambda n: f'{n}' * 5)
-    addresses = None
-    clients = None
-    sellers = None
+    user_phone_country_code = factory.Sequence(lambda n: f'+{n:02d}')
+    user_phone_state_code = factory.Sequence(lambda n: f'{n:02d}')
+    user_phone_number = factory.Sequence(lambda n: f'{n:09d}')
 
 
 class AddressFactory(factory.Factory):
     class Meta:
         model = Address
-        exclude = ('user',)
+        exclude = (
+            'user',
+        )  # Impede que o objeto 'user' seja passado ao modelo
+
+    # Aceita um objeto 'user' como parâmetro
+    user = factory.SubFactory(UserFactory)
+
+    # Usa o objeto 'user' para extrair o ID
+    user_id = factory.LazyAttribute(lambda o: o.user.user_id)
 
     address_country = factory.Sequence(lambda n: f'Country{n}')
     address_zip_code = factory.Sequence(lambda n: f'{n:05}-000')
@@ -43,17 +47,22 @@ class AddressFactory(factory.Factory):
     address_city = factory.Sequence(lambda n: f'City{n}')
     address_neighborhood = factory.Sequence(lambda n: f'Neighborhood{n}')
     address_street = factory.Sequence(lambda n: f'Street{n}')
-    address_number = factory.Sequence(lambda n: f'{n:05d}')
+    address_number = factory.Sequence(lambda n: f'{n:03d}')
     address_complement = factory.Sequence(lambda n: f'Complement{n}')
-
-    user_id = factory.LazyAttribute(
-        lambda obj: obj.user_id if hasattr(obj, 'user_id') else 1
-    )
 
 
 class SellerFactory(factory.Factory):
     class Meta:
         model = Seller
+        exclude = (
+            'user',
+        )  # Impede que o objeto 'user' seja passado ao modelo
+
+    # Aceita um objeto 'user' como parâmetro
+    user = factory.SubFactory(UserFactory)
+
+    # Usa o objeto 'user' para extrair o ID
+    user_id = factory.LazyAttribute(lambda o: o.user.user_id)
 
     seller_description = factory.Sequence(lambda n: f'Description {n}')
     seller_bank_account = factory.Sequence(lambda n: f'{n:07d}')
@@ -61,18 +70,20 @@ class SellerFactory(factory.Factory):
     seller_bank_name = factory.Sequence(lambda n: f'Bank {n}')
     seller_bank_type = factory.Iterator(['checking', 'savings'])
     seller_status = factory.Iterator(['active', 'inactive'])
-    user_id = factory.LazyAttribute(
-        lambda obj: obj.user_id if hasattr(obj, 'user_id') else 1
-    )
 
 
 class ClientFactory(factory.Factory):
     class Meta:
         model = Client
+        exclude = (
+            'user',
+        )  # Impede que o objeto 'user' seja passado ao modelo
 
-    user_id = factory.LazyAttribute(
-        lambda obj: obj.user_id if hasattr(obj, 'user_id') else 1
-    )
+    # Aceita um objeto 'user' como parâmetro
+    user = factory.SubFactory(UserFactory)
+
+    # Usa o objeto 'user' para extrair o ID
+    user_id = factory.LazyAttribute(lambda o: o.user.user_id)
 
 
 class CategoryFactory(factory.Factory):
@@ -99,26 +110,12 @@ class ProductFactory(factory.Factory):
     product_condition = factory.Iterator(['new', 'used'])
     product_gender = factory.Iterator(['female', 'male', 'unisex'])
     product_size = factory.Iterator(['S', 'M', 'L', 'XL'])
-    # category_id = factory.LazyAttribute(
-    #     lambda obj: obj.category_id if hasattr(obj, 'category_id') else 1
-    # )
-    # color_id = factory.LazyAttribute(
-    #     lambda obj: obj.color_id if hasattr(obj, 'color_id') else 1
-    # )
     product_status = factory.Iterator(['available', 'unavailable'])
-    seller_id = factory.LazyAttribute(
-        lambda obj: obj.seller_id if hasattr(obj, 'seller_id') else 1
-    )
 
 
 class CartWantFactory(factory.Factory):
     class Meta:
         model = CartWant
 
-    product_id = factory.LazyAttribute(
-        lambda obj: obj.product_id if hasattr(obj, 'product_id') else 1
-    )
-    want_type = factory.Iterator(['cart', 'wishlist'])
-    client_id = factory.LazyAttribute(
-        lambda obj: obj.client_id if hasattr(obj, 'client_id') else 1
-    )
+    # Estes valores devem ser passados explicitamente nos testes
+    # Ex: CartWantFactory(product_id=1, client_id=1)

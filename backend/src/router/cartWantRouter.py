@@ -56,12 +56,12 @@ async def create_cart_want(
     response_model=list[int],
     description="IDs of products in the client's where want type is 'cart'",
 )
-async def list_cart_by_client_id(
+async def list_id_products_in_cart(
     session: Session,
     user: CurrentUser,
     cart_want_filter: Annotated[CartWantFilter, Depends()],
 ):
-    product_ids = await CartWantRepository.get_cart_want_by_client_id(
+    product_ids = await CartWantRepository.get_all_id_products(
         session, user.client_profile.client_id, cart_want_filter.want_type
     )
     return product_ids
@@ -79,7 +79,7 @@ async def update_cart_want(
     session: Session,
     user: CurrentUser,
 ):
-    cart_want = await CartWantRepository.get_cart_want_by_ids(
+    cart_want = await CartWantRepository.get_cart(
         session, product_id, client_id
     )
 
@@ -117,7 +117,7 @@ async def delete_cart_want(
     session: Session,
     user: CurrentUser,
 ):
-    cart_want = await CartWantRepository.get_cart_want_by_ids(
+    cart_want = await CartWantRepository.get_cart(
         session, product_id, client_id
     )
 
