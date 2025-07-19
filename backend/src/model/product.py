@@ -14,6 +14,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from .category import Category
     from .color import Color
     from .seller import Seller
+    from .cart_want import CartWant
 
 
 class ProductStatus(enum.Enum):
@@ -118,4 +119,11 @@ class Product:
         back_populates='products',
         lazy='selectin',
         uselist=False,
+    )
+    
+    cart_wants: Mapped[list['CartWant']] = relationship(
+        back_populates='product',
+        init=False,
+        lazy='selectin',
+        cascade='all, delete-orphan',
     )

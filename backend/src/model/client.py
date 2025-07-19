@@ -7,6 +7,7 @@ from src.database import table_registry
 
 if TYPE_CHECKING:  # pragma: no cover
     from .user import User
+    from .cart_want import CartWant
 
 
 @table_registry.mapped_as_dataclass
@@ -23,4 +24,11 @@ class Client:
 
     user: Mapped['User'] = relationship(
         back_populates='client_profile', init=False
+    )
+
+    cart_wants: Mapped[list['CartWant']] = relationship(
+        back_populates='client',
+        init=False,
+        lazy='selectin',
+        cascade='all, delete-orphan',
     )

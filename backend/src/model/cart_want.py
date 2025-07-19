@@ -1,12 +1,15 @@
+from typing import TYPE_CHECKING
+
 import enum
 
 from sqlalchemy import Enum, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import table_registry
 
-from .client import Client
-from .product import Product
+if TYPE_CHECKING:  # pragma: no cover
+    from .client import Client
+    from .product import Product
 
 
 class WantType(enum.Enum):
@@ -20,12 +23,26 @@ class CartWant:
 
     product_id: Mapped[int] = mapped_column(
         ForeignKey(
-            Product.product_id, ondelete='RESTRICT', onupdate='RESTRICT'
+            'tbl_product.product_id', ondelete='RESTRICT', onupdate='RESTRICT'
         ),
         primary_key=True,
     )
     client_id: Mapped[int] = mapped_column(
-        ForeignKey(Client.client_id, ondelete='RESTRICT', onupdate='RESTRICT'),
+        ForeignKey('tbl_client.client_id', ondelete='RESTRICT', onupdate='RESTRICT'),
         primary_key=True,
     )
     want_type: Mapped[WantType] = mapped_column(Enum(WantType), nullable=False)
+
+    product: Mapped[Product] = relationship(
+        init=False,
+        back_populates='cart_wants',
+        uselist=False,
+        lazy='joined',
+    )
+
+    client: Mapped[Client] = relationship(
+        init=False,
+        back_populates='cart_wants',
+        uselist=False,
+        lazy='joined',
+    )
