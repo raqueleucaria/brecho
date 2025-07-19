@@ -10,17 +10,17 @@ Levando em conta a necessidade de refator o código originalmente em Java para P
 | Pacotes/modularização | `package`, estrutura rígida                    | Módulos (`.py`) e pacotes (pastas com `__init__.py`)  |
 | MVC Formal            | Usa diagramas de pacotes/arquitetura formal    | Python tende a ter arquitetura mais leve e flexível   |
 
-## Diagrama UML
+## Diagrama UML Ajustado (com base no MER e backlog)
 ```mermaid
 classDiagram
-    %% Classe base
+    %% Classes principais
     class Usuario {
-        _id_usuario: int
-        _nome: str
-        _email: str
-        _senha: str
-        _enderecos: list
-        _telefones: list
+        -user_id: int
+        -nome: str
+        -email: str
+        -senha: str
+        -telefone: list
+        -enderecos: list
         +login()
         +logout()
         +editar_perfil()
@@ -28,6 +28,8 @@ classDiagram
 
     class Cliente {
         +visualizar_produtos()
+        +adicionar_favorito()
+        +visualizar_favoritos()
         +realizar_compra()
         +rastrear_pedido()
     }
@@ -35,68 +37,103 @@ classDiagram
     class Vendedor {
         +criar_loja()
         +cadastrar_produto()
+        +editar_produto()
         +confirmar_venda()
         +notificar_envio()
     }
 
     class Loja {
-        _id_loja: int
-        _nome_loja: str
-        _produtos: list
-        _vendedor: Vendedor
-        +editar_loja()
+        -store_id: int
+        -status: str
+        -produtos: list
+        +ativar()
+        +desativar()
     }
 
     class Produto {
-        _id_produto: int
-        _nome: str
-        _descricao: str
-        _preco: float
-        _estoque: int
-        _categoria: str
+        -product_id: int
+        -nome: str
+        -descricao: str
+        -preco: float
+        -categoria: str
+        -tamanho: str
+        -cor: str
         +atualizar_estoque()
     }
 
     class Carrinho {
-        _itens: list
+        -itens: list
         +adicionar_item()
         +remover_item()
         +calcular_total()
     }
 
     class Pedido {
-        _id_pedido: int
-        _cliente: Cliente
-        _produtos: list
-        _status: str
-        +atualizar_status()
+        -order_id: int
+        -produtos: list
+        -status: str
+        +confirmar()
+        +cancelar()
     }
 
     class Pagamento {
-        _metodos_pagamento: list
+        -payment_id: int
+        -tipo: str
+        -status: str
         +escolher_metodo()
+        +confirmar()
+    }
+
+    class Cartao {
+        -card_id: int
+        -numero: str
+        -titular: str
+        -validade: str
+        -cvv: str
     }
 
     class ContaBancaria {
-        _banco: str
-        _numero_conta: str
-        +validar_dados()
+        -bank_id: int
+        -banco: str
+        -agencia: str
+        -conta: str
+        -tipo: str
+    }
+
+    class Rastreio {
+        -tracking_id: int
+        -status: str
+        -localizacao: str
+        -data: datetime
+    }
+
+    class Notificacao {
+        -notification_id: int
+        -status: str
+        -enviada_em: datetime
+    }
+
+    class Favorito {
+        -user_id: int
+        -product_id: int
     }
 
     %% Relações
     Usuario <|-- Cliente
     Usuario <|-- Vendedor
     Cliente --> Carrinho
-    Carrinho --> Produto
     Cliente --> Pedido
+    Cliente --> Favorito
+    Favorito --> Produto
+    Carrinho --> Produto
     Pedido --> Produto
     Pedido --> Pagamento
+    Pedido --> Rastreio
     Vendedor --> ContaBancaria
     Vendedor --> Loja
     Loja --> Produto
-
-
-
+    Pedido --> Notificacao
+    Pagamento --> Cartao
 ```
 
 ## Estrutura
@@ -110,4 +147,3 @@ project/
 ├── static/
 ├── tests/ 
 ├── main.py
-```
