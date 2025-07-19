@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from unittest.mock import patch
 
-from src.repository.clientRepository import ClientRepository
+from src.repository.userRepository import UserRepository
 from src.schema.userSchema import UserPublic
 
 
@@ -168,7 +168,7 @@ def test_delete_user_with_wrong_user(client, other_user, token):
 
 def test_create_user_exception(client):
     with patch.object(
-        ClientRepository, 'create_client_for_user', side_effect=Exception
+        UserRepository, 'create_user', side_effect=Exception('DB Error')
     ):
         response = client.post(
             '/user/',
