@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import table_registry
+
+if TYPE_CHECKING:  # pragma: no cover
+    from .user import User
 
 
 @table_registry.mapped_as_dataclass
@@ -24,4 +29,8 @@ class Address:
             'tbl_user.user_id', ondelete='RESTRICT', onupdate='RESTRICT'
         ),
         nullable=False,
+    )
+
+    user: Mapped['User'] = relationship(
+        init=False, back_populates='addresses', uselist=False
     )

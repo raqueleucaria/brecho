@@ -17,26 +17,18 @@ class AddressRepository:
         return result.scalar_one_or_none()
 
     @staticmethod
-    async def get_address(
-        session: AsyncSession,
-        user_id: int,
-    ):
+    async def get_addresses_by_user_id(session: AsyncSession, user_id: int):
         result = await session.scalars(
             select(Address).where(Address.user_id == user_id)
         )
-
         return result.all()
 
     @staticmethod
-    async def create_address(
-        session: AsyncSession, address_data: dict, user_id: int
-    ):
-        new_address = Address(**address_data, user_id=user_id)
-        session.add(new_address)
-
+    async def create_address(session: AsyncSession, address: Address):
+        session.add(address)
         await session.commit()
-        await session.refresh(new_address)
-        return new_address
+        await session.refresh(address)
+        return address
 
     @staticmethod
     async def update_address(

@@ -2,7 +2,10 @@ from dataclasses import asdict
 
 import pytest
 from sqlalchemy import create_engine, select, text
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import noload
 
+from src.database import get_session
 from src.model.address import Address
 from src.model.user import User
 from src.settings import Settings
@@ -52,7 +55,7 @@ async def test_create_user(session):
 
 @pytest.mark.asyncio
 async def test_create_address(session, user):
-    address = Address(
+    address_data = Address(
         address_country='Brasil',
         address_zip_code='12345-678',
         address_state='SP',
@@ -63,13 +66,16 @@ async def test_create_address(session, user):
         address_complement='Apto 456',
         user_id=user.user_id,
     )
-
-    session.add(address)
+    session.add(address_data)
     await session.commit()
 
-    address = await session.scalar(select(Address))
+    query = select(Address).options(noload(Address.user))
+    fetched_address = await session.scalar(query)
 
-    assert asdict(address) == {
+    address_dict = asdict(fetched_address)
+    address_dict.pop('user', None)
+
+    assert address_dict == {
         'address_id': 1,
         'address_country': 'Brasil',
         'address_zip_code': '12345-678',
@@ -106,3 +112,15 @@ async def test_user_address_relationship(session, user: User):
     )
 
     assert user.addresses == [address]
+
+
+@pytest.mark.asyncio
+async def test_get_session_executes_and_yields_session():
+    session_generator = get_session()
+
+    async for session in session_generator:
+        assert isinstance(session, AsyncSession)
+        assert session.is_active
+
+        result = await session.execute(text('SELECT 1'))
+        assert result.scalar_one() == 1

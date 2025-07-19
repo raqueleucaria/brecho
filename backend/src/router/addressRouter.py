@@ -5,11 +5,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_session
+from src.model.address import Address
 from src.model.user import User
 from src.repository.addressRepository import AddressRepository
 from src.schema.addressSchema import (
+    AddressCreateSchema,
+    AddressList,
     AddressPublic,
-    AddressSchema,
     AddressUpdate,
 )
 from src.schema.messageSchema import Message
@@ -21,23 +23,31 @@ Session = Annotated[AsyncSession, Depends(get_session)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
-@router.get('/', response_model=list[AddressPublic])
-async def get_addresses(
-    session: Session,
-    user: CurrentUser,
-):
-    return await AddressRepository.get_address(session, user.user_id)
+@router.get('/', response_model=AddressList)
+async def list_addresses(session: Session, user: CurrentUser):
+    return await AddressRepository.get_addresses_by_user_id(
+        session, user.user_id
+    )
 
 
 @router.post('/', response_model=AddressPublic, status_code=HTTPStatus.CREATED)
 async def create_address(
-    address: AddressSchema,
+    address: AddressCreateSchema,
     user: CurrentUser,
     session: Session,
 ):
-    return await AddressRepository.create_address(
-        session, address.dict(), user.user_id
+    address = Address(
+        address_country=address.address_country,
+        address_zip_code=address.address_zip_code,
+        address_state=address.address_state,
+        address_city=address.address_city,
+        address_neighborhood=address.address_neighborhood,
+        address_street=address.address_street,
+        address_number=address.address_number,
+        address_complement=address.address_complement,
+        user_id=user.user_id,
     )
+    return await AddressRepository.create_address(session, address)
 
 
 @router.patch('/{address_id}', response_model=AddressPublic)
@@ -54,12 +64,6 @@ async def patch_address(
     if not db_address:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail='Address not found'
-        )
-
-    if db_address.user_id != user.user_id:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail='You do not have permission to change this address.',
         )
 
     update_data = address_data.model_dump(exclude_unset=True)
@@ -81,12 +85,6 @@ async def delete_address(
     if not db_address:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail='Address not found'
-        )
-
-    if db_address.user_id != user.user_id:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail='You do not have permission to delete this address.',
         )
 
     return await AddressRepository.delete_address(session, db_address)
