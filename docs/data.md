@@ -55,51 +55,18 @@
 <!-- USER == especializacao total não exclusiva, usuário pode ser cliente e vendedor também -->
 
 ## Entity Relationship Diagram
-![erd](<./archive/erd.png>)
-[Download - conceptual_ERD.brM3](./archive/conceptual_ERD.brM3)
+![erd](./assets/img/erd.png)
+[Download - conceptual_ERD.brM3](./assets/archive/conceptual_ERD.brM3)
 
 ## Logical Data Model (LDM)
-![ldm](./archive/ldm.png)
-[Download - logical_LDM.brM3](./archive/logical_LDM.brM3)
+![ldm](./assets/img/ldm.png)
+[Download - logical_LDM.brM3](./assets/archive/logical_LDM.brM3)
 
 <!-- ## Data Dictionary -->
 
 ## Script
 
-- [Physical](./script/db_brecho.sql)
-- [Populate](./script/populate.sql)
-- [Delete](./script/delete.sql)
+- [Physical](./assets/data/db_brecho.sql)
+- [Populate](./assets/data/populate.sql)
+- [Delete](./assets/data/delete.sql)
   
-
-
-
-
-/
-├── backend
-│   ├── src/
-│   │   ├── schema/
-│   │   │   └── authSchema.py
-│   │   │   └── userSchema.py
-│   │   │   └── addressSchema.py
-│   │   ├── database.py           
-│   │   ├── models/
-│   │   │   ├── __init__.py       
-│   │   │   ├── address.py         
-│   │   │   └── user.py           
-│   │   ├── repositories/
-│   │   │   ├── addressRouter.py                
-│   │   │   └── userRepository.py         
-│   │   ├── routers/
-│   │   │   └── userRouter.py           
-│   │   │   └── authRouter.py         
-│   │   │   └── address.py  
-│   │   ├── app.py
-│   │   ├── database.py  
-│   │   ├── security.py  
-│   │   ├── settings.py     
-│   └── tests/
-│   └── docs/
-├── Dockerfile
-├── docker-compose.yml
-├── .env
-├── ...
