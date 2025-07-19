@@ -36,6 +36,7 @@ class User:
     addresses: Mapped[list['Address']] = relationship(
         init=False,
         cascade='all, delete-orphan',
+        back_populates='user',
         lazy='selectin',
     )
 

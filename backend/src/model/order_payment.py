@@ -1,11 +1,16 @@
 import enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, Enum, ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import table_registry
 
-from .checkout import Checkout
+if TYPE_CHECKING:
+    from .boleto import Boleto
+    from .card import Card
+    from .checkout import Checkout
+    from .pix import Pix
 
 
 class OrderStatus(enum.Enum):
@@ -50,7 +55,9 @@ class OrderPayment:
     )
     checkout_id: Mapped[int] = mapped_column(
         ForeignKey(
-            Checkout.checkout_id, ondelete='RESTRICT', onupdate='RESTRICT'
+            'tbl_checkout.checkout_id',
+            ondelete='RESTRICT',
+            onupdate='RESTRICT',
         ),
         nullable=False,
     )
@@ -59,4 +66,17 @@ class OrderPayment:
         nullable=False,
         default=OrderStatus.pending,
         server_default='pending',
+    )
+
+    # --- RELACIONAMENTOS ---
+    checkout: Mapped['Checkout'] = relationship(init=False)
+
+    pix_details: Mapped['Pix'] = relationship(
+        init=False, cascade='all, delete-orphan'
+    )
+    boleto_details: Mapped['Boleto'] = relationship(
+        init=False, cascade='all, delete-orphan'
+    )
+    card_details: Mapped['Card'] = relationship(
+        init=False, cascade='all, delete-orphan'
     )

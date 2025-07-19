@@ -1,9 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Date, ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import table_registry
 
-from .order_payment import OrderPayment
+if TYPE_CHECKING:
+    from .order_payment import OrderPayment
 
 
 @table_registry.mapped_as_dataclass
@@ -19,9 +22,12 @@ class Card:
     )
     order_id: Mapped[int] = mapped_column(
         ForeignKey(
-            OrderPayment.order_id,
+            'tbl_order_payment.order_id',
             ondelete='RESTRICT',
             onupdate='RESTRICT',
         ),
         nullable=False,
+    )
+    order: Mapped['OrderPayment'] = relationship(
+        init=False, back_populates='card_details'
     )
